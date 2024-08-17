@@ -4,10 +4,14 @@ import bcrypt from 'bcrypt';
 
 export const addManager = async (req, res) => {
     try {
-        const { name, email, password, gender, age, phonenumber } = req.body;
+        const { name, email, password, gender, age, phonenumber, role } = req.body;
 
         if (!name || !email || !password || !gender || !age || !phonenumber) {
             return res.status(400).json({ message: 'All fields are required' });
+        }
+
+        if (role && role !== 'manager') {
+            return res.status(400).json({ message: 'Only users with the role "manager" can be added' });
         }
 
         const existingManager = await Manager.findOne({ email });
@@ -23,18 +27,18 @@ export const addManager = async (req, res) => {
             password: hashedPassword,
             gender,
             age,
-            phonenumber
+            phonenumber,
+            role: 'manager'
         });
 
         await newManager.save();
 
         res.status(201).json({ message: 'Manager added successfully', data: newManager });
     } catch (error) {
-        console.error('Error adding manager:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error adding manager:', error.message); // Log the error message
+        res.status(500).json({ message: 'Server error', error: error.message }); // Include the error message in the response
     }
 };
-
 
 export const updateManager = async (req, res) => {
     try {

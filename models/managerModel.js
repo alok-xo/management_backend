@@ -29,6 +29,7 @@ const managerSchema = new mongoose.Schema({
     },
     role: {
         type: String,
+        enum: ['manager'],
         default: 'manager'
     }
 }, { timestamps: true });
