@@ -110,28 +110,18 @@ export const loginUser = async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" });
         }
 
-        if (user.role === 'manager') {
-            const token = jwt.sign(
-                { id: user._id, role: user.role },
-                process.env.JWT_SECRET,
-                { expiresIn: '1h' }
-            );
-
-            return res.status(200).json({
-                message: "Login successful",
-                data: user,
-                role: user.role,
-                token
-            });
-        }
-
         const token = jwt.sign(
             { id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
-        res.status(200).json({ message: "Login successful", data: user, role: user.role, token });
+        return res.status(200).json({
+            message: "Login successful",
+            data: user,
+            role: user.role,
+            token
+        });
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).json({ message: "Server Error", error: error.message });
