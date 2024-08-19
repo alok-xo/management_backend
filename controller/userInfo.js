@@ -116,4 +116,41 @@ export const addUser = async (req, res) => {
     }
 };
 
+export const getUserswithTask = async (req, res) => {
+    try {
+        const result = await User.aggregate([
+            {
+                $lookup: {
+                    from: 'tasks',
+                    localField: 'tasks',
+                    foreignField: '_id',
+                    as: 'tasks'
+                }
+            },
+            {
+                $match: {
+                    tasks: { $ne: [] }
+                }
+            },
+            {
+                $facet: {
+                    users: [
+                        { $project: { name: 1, email: 1, phone: 1, role: 1, tasks: 1 } }
+                    ],
+                    totalCount: [
+                        { $count: 'total' }
+                    ]
+                }
+            }
+        ]);
+
+        const totalUsers = result[0].totalCount.length > 0 ? result[0].totalCount[0].total : 0;
+        const users = result[0].users;
+
+        res.json({ total: totalUsers, users });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
 
