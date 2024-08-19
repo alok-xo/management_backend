@@ -5,7 +5,7 @@ import { isAdmin } from '../middleware/adminMidware.js';
 
 const router = express.Router();
 
-router.get("/getUsers", isAdmin, getUsers);
+router.get("/getUsers",  getUsers);
 router.delete("/deleteUser/:id", deleteUser)
 router.patch("/updateUser/:id", updateUser)
 router.post("/addUser", addUser)

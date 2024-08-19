@@ -11,7 +11,8 @@ export const getUsers = async (req, res) => {
             searchQuery.name = { $regex: name, $options: 'i' };
         }
 
-        const users = await User.find(searchQuery);
+        // Find users and populate the tasks field with task details
+        const users = await User.find(searchQuery).populate('tasks');
 
         const totalUsers = await User.countDocuments(searchQuery);
 
